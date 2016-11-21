@@ -41,7 +41,10 @@ def getElementFromJson(json_obj, path):
 
 def sendRequest(opener, url, param, header, outputfile):
     #Encode the parameter
-    data_encoded = urllib.urlencode(param)
+    #data_encoded = urllib.urlencode(param)
+    if param is not None:
+        #data_encoded = urllib.quote_plus(param)
+        data_encoded = urllib.urlencode(param)
   
     if header is None:
         if param is None:
@@ -58,8 +61,33 @@ def sendRequest(opener, url, param, header, outputfile):
         
     return the_page
 
+#loadPage(opener, login_url, login_data, header)
+def loadPage(opener, url, data, header):
+        
+        data_encoded = urllib.urlencode(data)
+        print 'Data Encoded : ', data_encoded
+        try:
+#            if header is None:
+#                if data is None:
+#                    req = urllib2.Request(url)
+#                else:
+#                    req = urllib2.Request(url, data)
+#            else:
+#                req = urllib2.Request(url, data, header)
+        
+            if data is not None:
+                response = opener.open(url, data)
+            else:
+                response = opener.open(url)
+                
+            response = opener.open(req)   
+            return ''.join(response.readlines())
+        except Exception as e:
+            print 'Exception loadPage ', e
 
-def login(opener, config_file):
+
+
+def login(opener, config_file, output_file):
     
     header = {
         "Accept": "*/*",
@@ -78,14 +106,39 @@ def login(opener, config_file):
     
     login_url = "https://www.linkedin.com/uas/login-submit"
     
-    login_param = {    'session_key': username,    'session_password': password    }
+#    login_param = {    'session_key': username,    'session_password': password    }
+#    
+#    #                        (opener, url, param, header, outputfile)
+#    res_content = sendRequest(opener, login_url, login_param, header)
+#    #print res_content
+#    soup = BeautifulSoup(res_content)
+#    print soup.find("title")
+#    return
+
+    """
+      Handle login. This should populate our cookie jar.
+    """
+    #html = loadPage(opener, "https://www.linkedin.com/", None, None)
+    html = sendRequest(opener, "https://www.linkedin.com/", None, None, None)
+    soup = BeautifulSoup(html)
+    print 'Login Page : ',soup.find("title")
+    csrf = soup.find(id="loginCsrfParam-login")['value']
+
+    login_param = {    'session_key': username, 'session_password': password, 'loginCsrfParam': csrf,   }
+
+    #print 'Login Params : ', login_param
     
-    #                        (opener, url, param, header, outputfile)
-    res_content = sendRequest(opener, login_url, login_param, header, None)
-    #print res_content
-    soup = BeautifulSoup(res_content)
+    html = loadPage(opener, login_url, login_param, header)
+    #html = sendRequest(opener, login_url, login_param, header, None)
+    output = open(output_file, "ab")
+    output.write(html)
+    output.close()
+    soup = BeautifulSoup(html)
     print soup.find("title")
     return
+
+
+
                   #  (opener, config_file, output_file)
 def search_linkedin(opener, config_file, output_file):
     page_num = 1
@@ -187,8 +240,8 @@ if __name__ == '__main__' :
     urllib2.install_opener(opener)
     
     #Login with Credentials
-    login(opener, config_file)
+    login(opener, config_file, output_file)
     
     #Search the LinkedIn People Search
-    search_linkedin(opener, config_file, output_file)
+    #search_linkedin(opener, config_file, output_file)
     

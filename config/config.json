@@ -1,36 +1,6 @@
 {
     "login": {
-        "username": "saaammmeerrr@gmail.com",
-        "password": "#!testing56;"
-    },
-    "searchRules": [
-        {
-            "fieldName": "f_CC",
-            "fieldValue": "1128"
-        },
-        {
-            "fieldName": "countryCode",
-            "fieldValue": "cn"
-        },
-        {
-            "fieldName": "title",
-            "fieldValue": "hadoop developer"
-        },
-        {
-            "fieldName": "titleScope",
-            "fieldValue": "CP"
-        },
-        {
-            "fieldName": "locationType",
-            "fieldValue": "I"
-        },
-        {
-            "fieldName": "orig",
-            "fieldValue": "ADVS"
-        },
-        {
-            "fieldName": "pt",
-            "fieldValue": "people"
-        }        
-    ]
+        "username": "email@address.com",
+        "password": "password"
+    }
 }
